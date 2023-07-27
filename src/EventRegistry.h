@@ -7,7 +7,7 @@ void ActorRefCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
 
         auto keywordNPC = RE::BGSKeyword::LookupByID<RE::BGSKeyword>(0x0013794);
         if (!ref.IsPlayerRef() && ref.GetFormType() == RE::FormType::ActorCharacter && ref.HasKeyword(keywordNPC)) {
-
+            auto plyFAC = RE::TESForm::LookupByID<RE::TESFaction>(0x0000DB1);
             auto refACT = ref.As<RE::Actor>();
             auto refFAC = refACT->GetCrimeFaction();
             auto refDetection = refACT->RequestDetectionLevel(act); // 0=Undetected 10=VeryLow 20=Low 30=Normal 40=High 50=Critical
@@ -57,20 +57,24 @@ void ActorRefCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
 
 // Detection Check
             if (refDetection > 0 && detCount == 0) {
-                if ((refMorality == 3 || refMorality == 1)) {
-                    if (owner == refFAC && refACT->IsGuard()) {
-                        logger::info("{} fac_report {}", refACT->GetName(), refDetection);
-                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
-                        detCount++;
-                        return RE::BSContainer::ForEachResult::kStop; 
+                if (refMorality == 3 || refMorality == 1) {
 
+                  // Faction Check
+                    if (owner == refFAC) {
+
+                        if (refACT->IsGuard()) {
+                            logger::info("{} fac_report {}", refACT->GetName(), refDetection);
+                            act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                            detCount++;
+                            return RE::BSContainer::ForEachResult::kStop;
+                        }
                     } else if (owner != refFAC) {
+
                         if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
                             logger::info("{} owner_report {}", refACT->GetName(), refDetection);
                             act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
                             detCount++;
                             return RE::BSContainer::ForEachResult::kStop;
-
                         } else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
                             logger::info("{} non-owner_report {}", refACT->GetName(), refDetection);
                             act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
@@ -110,7 +114,7 @@ void RegisterForEvent_Hit() {
 
 
 
-
+            // Check for form type
             if (targetFormType == RE::FormType::Door || targetFormType == RE::FormType::Container) {
                  
                 // Check for player
