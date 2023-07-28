@@ -112,13 +112,11 @@ void RegisterForEvent_Hit() {
             auto targetName = targetREFptr->GetBaseObject()->GetName();
             auto targetFormType = targetREFptr->GetBaseObject()->GetFormType();
 
-
-
             // Check for form type
             if (targetFormType == RE::FormType::Door || targetFormType == RE::FormType::Container) {
-                 
+
                 // Check for player
-                if (weapFormType == RE::FormType::Weapon || weapFormType == RE::FormType::Explosion) {
+                if (weapFormType == RE::FormType::Weapon) {
                     
                     switch (targetREFptr->GetLockLevel()) {
                         case RE::LOCK_LEVEL::kVeryEasy:
