@@ -37,10 +37,10 @@ void RegisterForEvent_Hit() {
                 if (weapFormType == RE::FormType::Weapon && !proj) {
                     auto attackData = actorACT->GetActorRuntimeData().currentProcess->high->attackData->data.flags;
                     if (attackData.any(kPowerAttack)) {
-                        LockCheck(targetREFptr, targetREF, actorREFptr, actorACT, Power);
+                        LockCheck(targetREFptr, actorREFptr, Power);
                     }
                     else if (attackData.any(kBashAttack)) {
-                        LockCheck(targetREFptr, targetREF, actorREFptr, actorACT, Power);
+                        LockCheck(targetREFptr, actorREFptr, Power);
                     }
                 }
             }
