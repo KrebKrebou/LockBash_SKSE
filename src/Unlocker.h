@@ -224,6 +224,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         RE::PlaySound("DRSLockedSD");
         timer_thread.~thread();
     }
+    RE::PlayerCharacter::GetSingleton()->UpdateCrosshairs();
  
 }
 
@@ -332,5 +333,4 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFR *ref,
         }
         break;
     }
-
 }
