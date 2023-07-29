@@ -1,10 +1,11 @@
 #pragma once
 
+std::string data;
+CSimpleIniA ini;
 
 
 void SetupINI() {
-    std::string data;
-    CSimpleIniA ini;
+
     ini.SetUnicode();
     ini.LoadFile("Data\\SKSE\\Plugins\\LockBashSKSE.ini");
 

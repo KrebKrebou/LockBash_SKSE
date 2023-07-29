@@ -2,8 +2,6 @@
 
 #include "Timer.h"
 
-CSimpleIniA ini;
-
 void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
     int detCount = 0;
     RE::TES::GetSingleton()->ForEachReferenceInRange(center, radius, [act, center, &detCount](RE::TESObjectREFR& ref) {
@@ -116,8 +114,6 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
 }
 
 void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr act, int cond) {
-    ini.SetUnicode();
-    ini.LoadFile("Data\\SKSE\\Plugins\\LockBashSKSE.ini");
 
     // 0 = Unlock 1 = noUnlock 2 = Unlocked 3 = keyLocked 4 = specLocked
     if (cond == 0) {
