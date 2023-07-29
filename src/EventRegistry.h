@@ -82,21 +82,21 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                         }
                     } 
 
-                //}else if(refMorality == 0 || refMorality == 2) {
-                //    // Faction Check
-                //    if (owner != refFAC) {
-                //        if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                //            logger::info("{} morality {}", refACT->GetName(), refMorality);
-                //            act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
-                //            detCount++;
-                //            return RE::BSContainer::ForEachResult::kStop;
-                //        }
-                //        else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                //            logger::info("{} no_report morality {}", refACT->GetName(), refMorality);
-                //            detCount++;
-                //            return RE::BSContainer::ForEachResult::kStop;
-                //        }
-                //    }
+                }else if(refMorality == 0 || refMorality == 2) {
+                    // Faction Check
+                    if (owner != refFAC) {
+                        if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
+                            logger::info("{} lowM_report {}", refACT->GetName(), refMorality);
+                            act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+                            detCount++;
+                            return RE::BSContainer::ForEachResult::kStop;
+                        }
+                        else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
+                            logger::info("{} lowM_no_report {}", refACT->GetName(), refMorality);
+                            //detCount++;
+                            return RE::BSContainer::ForEachResult::kStop;
+                        }
+                    }
                 }  // for lower moralities paste here  // for lower moralities paste here
             }
         }
