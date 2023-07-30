@@ -10,9 +10,13 @@ void RegisterForEvent_Hit() {
             auto actorName = actorREFptr->GetBaseObject()->GetName();
             auto actorACT = actorREFptr->As<RE::Actor>();
 
-            auto Health = actorACT->AsActorValueOwner()->GetBaseActorValue(RE::ActorValue::kHealth);
-            auto Stamina = actorACT->AsActorValueOwner()->GetBaseActorValue(RE::ActorValue::kHealth);
+            auto Health = actorACT->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
+            auto Stamina = actorACT->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
             auto Power = Health + Stamina;
+
+            if (ini.GetLongValue("Gameplay", "Formula", 1)) {
+                Power = 2 * Health + Stamina;
+            }
 
             auto weap = RE::TESForm::LookupByID(event->source);
             auto weapWEAP = weap->As<RE::TESObjectWEAP>();
@@ -23,6 +27,7 @@ void RegisterForEvent_Hit() {
 
             auto kPowerAttack = RE::AttackData::AttackFlag::kPowerAttack;
             auto kBashAttack = RE::AttackData::AttackFlag::kBashAttack;
+            auto kChargeAttack = RE::AttackData::AttackFlag::kChargeAttack;
 
             // target
             auto targetREFptr = event->target;
@@ -36,11 +41,24 @@ void RegisterForEvent_Hit() {
                 // Check for weapon
                 if (weapFormType == RE::FormType::Weapon && !proj) {
                     auto attackData = actorACT->GetActorRuntimeData().currentProcess->high->attackData->data.flags;
-                    if (attackData.any(kPowerAttack)) {
-                        LockCheck(targetREFptr, actorREFptr, Power);
+                    if (!attackData.any(kBashAttack, kPowerAttack, kChargeAttack)) {
+                        logger::info("kNormalAttack");
+                        LockCheck(targetREFptr, actorREFptr, Power, 1200);
                     }
                     else if (attackData.any(kBashAttack)) {
-                        LockCheck(targetREFptr, actorREFptr, Power);
+                        logger::info("kBashAttack");
+                        Power = Power + 50;
+                        LockCheck(targetREFptr, actorREFptr, Power, 1600);
+                    }
+                    else if (attackData.any(kPowerAttack)) {
+                        logger::info("kPowerAttack");
+                        Power = Power + 100;
+                        LockCheck(targetREFptr, actorREFptr, Power, 2000);
+                    }
+                    else if (attackData.any(kChargeAttack)) {
+                        logger::info("kChargeAttack");
+                        Power = Power + 150;
+                        LockCheck(targetREFptr, actorREFptr, Power, 2400);
                     }
                 }
             }
