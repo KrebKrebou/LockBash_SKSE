@@ -41,7 +41,7 @@ void RegisterForEvent_Hit() {
                 // Check for weapon
                 if (weapFormType == RE::FormType::Weapon && !proj) {
                     auto attackData = actorACT->GetActorRuntimeData().currentProcess->high->attackData->data.flags;
-                    if (!attackData.any(kBashAttack, kPowerAttack, kChargeAttack)) {
+                    if (!attackData.any(kBashAttack, kPowerAttack)) {
                         logger::info("kNormalAttack");
                         LockCheck(targetREFptr, actorREFptr, Power, 1200);
                     }
