@@ -8,7 +8,7 @@ SKSEPluginLoad(const SKSE::LoadInterface *skse) {
     SKSE::Init(skse);
     SetupLog();
     SetupINI();
-    SKSE::log::info("Kreb SKSE test initializing!");
+    logger::info("LockBashSKSE initializing!");
 
      ////////////////////
     ///Add event sink///
@@ -20,7 +20,7 @@ SKSEPluginLoad(const SKSE::LoadInterface *skse) {
     SKSE::GetMessagingInterface()->RegisterListener([](SKSE::MessagingInterface::Message *message){
         if (message->type == SKSE::MessagingInterface::kDataLoaded)
 
-            RE::ConsoleLog::GetSingleton()->Print("Initialized");
+            RE::ConsoleLog::GetSingleton()->Print("LockBashSKSE Initialized");
 
     });
 
