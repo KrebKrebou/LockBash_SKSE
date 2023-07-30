@@ -124,7 +124,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         std::thread timer_thread(timer, milliseconds);
         timer_thread.join();
 
-        if (ini.GetBoolValue("General", "Notifications", true)) {
+        if (ini.GetBoolValue("Misc", "Notifications", true)) {
             if (act->As<RE::Actor>()->IsPlayerRef()) {
                 RE::DebugNotification("Lock broken");
             }
@@ -146,7 +146,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         std::thread timer_thread(timer, milliseconds);
         timer_thread.join();
 
-        if (ini.GetBoolValue("General", "Notifications", true)) {
+        if (ini.GetBoolValue("Misc", "Notifications", true)) {
             if (act->As<RE::Actor>()->IsPlayerRef()) {
                 RE::DebugNotification("Can't break lock");
             }
@@ -167,7 +167,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         std::thread timer_thread(timer, milliseconds);
         timer_thread.join();
 
-        if (ini.GetBoolValue("General", "Notifications", true)) {
+        if (ini.GetBoolValue("Misc", "Notifications", true)) {
             if (act->As<RE::Actor>()->IsPlayerRef()) {
                 RE::DebugNotification("Already unlocked");
             }
@@ -188,7 +188,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         std::thread timer_thread(timer, milliseconds);
         timer_thread.join();
 
-        if (ini.GetBoolValue("General", "Notifications", true)) {
+        if (ini.GetBoolValue("Misc", "Notifications", true)) {
             if (act->As<RE::Actor>()->IsPlayerRef()) {
                 RE::DebugNotification("Needs a key to unlock");
             }
@@ -208,7 +208,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         std::thread timer_thread(timer, milliseconds);
         timer_thread.join();
 
-        if (ini.GetBoolValue("General", "Notifications", true)) {
+        if (ini.GetBoolValue("Misc", "Notifications", true)) {
             if (act->As<RE::Actor>()->IsPlayerRef()) {
                 RE::DebugNotification("Lock won't budge");
             }
@@ -224,7 +224,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
  
 }
 
-void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float pwr) {
+void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float pwr, int radius) {
 
     float p_kVEasy = 100;
     float p_kEasy = 200;
@@ -232,19 +232,27 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
     float p_kHard = 400;
     float p_kVHard = 500;
 
+    if (ini.GetLongValue("Gameplay", "Formula", 1)) {
+         p_kVEasy = 350;
+         p_kEasy = 450;
+         p_kAverage = 550;
+         p_kHard = 700;
+         p_kVHard = 800;
+    }
+
     switch (refPtr->GetLockLevel()) {
     case RE::LOCK_LEVEL::kVeryEasy:
         if (pwr >= p_kVEasy) {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), 2000, actPtr->As<RE::Actor>());
+            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         else {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 1);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), 2000, actPtr->As<RE::Actor>());
+            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         break;
     case RE::LOCK_LEVEL::kEasy:
@@ -252,13 +260,13 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), 2000, actPtr->As<RE::Actor>());
+            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         else {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 1);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), 2000, actPtr->As<RE::Actor>());
+            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         break;
     case RE::LOCK_LEVEL::kAverage:
@@ -266,13 +274,13 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), 2000, actPtr->As<RE::Actor>());
+            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         else {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 1);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), 2000, actPtr->As<RE::Actor>());
+            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         break;
     case RE::LOCK_LEVEL::kHard:
@@ -280,13 +288,13 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), 2000, actPtr->As<RE::Actor>());
+            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         else {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 1);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), 2000, actPtr->As<RE::Actor>());
+            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         break;
     case RE::LOCK_LEVEL::kVeryHard:
@@ -294,13 +302,13 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), 2000, actPtr->As<RE::Actor>());
+            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         else {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 1);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), 2000, actPtr->As<RE::Actor>());
+            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         break;
     case RE::LOCK_LEVEL::kUnlocked:
@@ -308,7 +316,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 2);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), 2000, actPtr->As<RE::Actor>());
+            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         break;
     case RE::LOCK_LEVEL::kRequiresKey:
@@ -316,7 +324,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 3);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), 2000, actPtr->As<RE::Actor>());
+            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         break;
     default:
@@ -324,7 +332,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 4);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), 2000, actPtr->As<RE::Actor>());
+            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         break;
     }
