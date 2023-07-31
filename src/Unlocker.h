@@ -68,7 +68,9 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                     // Faction Check
                     if (owner == refFAC) {
                         if (refACT->IsGuard()) {
-                            logger::info("{} fac_report {}", refACT->GetName(), refDetection);
+                            if (ini.GetBoolValue("Misc", "Logs", false) == true) {
+                                logger::info("{} fac_report {}", refACT->GetName(), refDetection);
+                            }
                             act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
                             detCount++;
                             return RE::BSContainer::ForEachResult::kStop;
@@ -77,13 +79,17 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                     }
                     else if (owner != refFAC) {
                         if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                            logger::info("{} owner_report {}", refACT->GetName(), refDetection);
+                            if (ini.GetBoolValue("Misc", "Logs", false) == true) {
+                                logger::info("{} owner_report {}", refACT->GetName(), refDetection);
+                            }
                             act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
                             detCount++;
                             return RE::BSContainer::ForEachResult::kStop;
                         }
                         else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                            logger::info("{} non-owner_report {}", refACT->GetName(), refDetection);
+                            if (ini.GetBoolValue("Misc", "Logs", false) == true) {
+                                logger::info("{} non-owner_report {}", refACT->GetName(), refDetection);
+                            }
                             act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
                             detCount++;
                             return RE::BSContainer::ForEachResult::kStop;
@@ -95,13 +101,17 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                     // Faction Check
                     if (owner != refFAC) {
                         if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                            logger::info("{} lowM_report {}", refACT->GetName(), refMorality);
+                            if (ini.GetBoolValue("Misc", "Logs", false) == true) {
+                                logger::info("{} lowM_report {}", refACT->GetName(), refMorality);
+                            }
                             act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
                             detCount++;
                             return RE::BSContainer::ForEachResult::kStop;
                         }
                         else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                            logger::info("{} lowM_no_report {}", refACT->GetName(), refMorality);
+                            if (ini.GetBoolValue("Misc", "Logs", false) == true) {
+                                logger::info("{} lowM_no_report {}", refACT->GetName(), refMorality);
+                            }
                             //detCount++;
                             return RE::BSContainer::ForEachResult::kStop;
                         }
@@ -124,7 +134,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         std::thread timer_thread(timer, milliseconds);
         timer_thread.join();
 
-        if (ini.GetBoolValue("Misc", "Notifications", true)) {
+        if (ini.GetBoolValue("Misc", "Notifications", false) == true) {
             if (act->As<RE::Actor>()->IsPlayerRef()) {
                 RE::DebugNotification("Lock broken");
             }
@@ -146,7 +156,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         std::thread timer_thread(timer, milliseconds);
         timer_thread.join();
 
-        if (ini.GetBoolValue("Misc", "Notifications", true)) {
+        if (ini.GetBoolValue("Misc", "Notifications", false) == true) {
             if (act->As<RE::Actor>()->IsPlayerRef()) {
                 RE::DebugNotification("Can't break lock");
             }
@@ -167,7 +177,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         std::thread timer_thread(timer, milliseconds);
         timer_thread.join();
 
-        if (ini.GetBoolValue("Misc", "Notifications", true)) {
+        if (ini.GetBoolValue("Misc", "Notifications", false) == true) {
             if (act->As<RE::Actor>()->IsPlayerRef()) {
                 RE::DebugNotification("Already unlocked");
             }
@@ -188,7 +198,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         std::thread timer_thread(timer, milliseconds);
         timer_thread.join();
 
-        if (ini.GetBoolValue("Misc", "Notifications", true)) {
+        if (ini.GetBoolValue("Misc", "Notifications", false) == true) {
             if (act->As<RE::Actor>()->IsPlayerRef()) {
                 RE::DebugNotification("Needs a key to unlock");
             }
@@ -208,7 +218,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         std::thread timer_thread(timer, milliseconds);
         timer_thread.join();
 
-        if (ini.GetBoolValue("Misc", "Notifications", true)) {
+        if (ini.GetBoolValue("Misc", "Notifications", false) == true) {
             if (act->As<RE::Actor>()->IsPlayerRef()) {
                 RE::DebugNotification("Lock won't budge");
             }
@@ -232,7 +242,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
     float p_kHard = 400;
     float p_kVHard = 500;
 
-    if (ini.GetLongValue("Gameplay", "Formula", 1)) {
+    if (ini.GetLongValue("Gameplay", "Formula", 1) == 1) {
          p_kVEasy = 350;
          p_kEasy = 450;
          p_kAverage = 550;

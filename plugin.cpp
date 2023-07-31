@@ -8,7 +8,9 @@ SKSEPluginLoad(const SKSE::LoadInterface *skse) {
     SKSE::Init(skse);
     SetupLog();
     SetupINI();
-    logger::info("LockBashSKSE initializing!");
+
+    SKSE::log::trace("LockBashSKSE initializing!");
+    INILogCheck();
 
      ////////////////////
     ///Add event sink///
