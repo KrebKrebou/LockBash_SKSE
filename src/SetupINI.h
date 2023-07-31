@@ -12,17 +12,6 @@ void SetupINI() {
     const char* notificationCom = "# false = HUD messages off | true = HUD messages on";
     const char* logsCom = "# false = Log messages off | true = Log messages on";
 
-    //std::vector<long> gameplayFormulaVec = { 1, 2 };
-    //long gameplayFormulaReturn;
-    //for (long val : gameplayFormulaVec) {
-    //    gameplayFormulaReturn = val;
-    //}
-    //std::vector<bool> miscNotificationsVec = { true, false };
-    //bool miscNotificationsReturn;
-    //for (bool val : miscNotificationsVec) {
-    //    miscNotificationsReturn = val;
-    //}
-
     if (ini.IsEmpty()) {
         ini.SetLongValue("Gameplay", "Formula", 1, formulaCom, false, true);
         ini.SetBoolValue("Misc", "Notifications", false, notificationCom, true);
