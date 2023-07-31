@@ -34,11 +34,11 @@ void RegisterForEvent_Hit() {
             auto kPowerAttack = RE::AttackData::AttackFlag::kPowerAttack;
             auto kRotatingAttack = RE::AttackData::AttackFlag::kRotatingAttack;
 
-            std::vector<RE::AttackData::AttackFlag> attFlagVec = { kBashAttack, kChargeAttack, kContinuousAttack, kIgnoreWeapon, kNone, kOverrideData, kPowerAttack, kRotatingAttack };
-            RE::AttackData::AttackFlag attFlagReturn;
-            for (RE::AttackData::AttackFlag val : attFlagVec) {
-                attFlagReturn = val;
-            }
+            //std::vector<RE::AttackData::AttackFlag> attFlagVec = { kBashAttack, kChargeAttack, kContinuousAttack, kIgnoreWeapon, kNone, kOverrideData, kPowerAttack, kRotatingAttack };
+            //RE::AttackData::AttackFlag attFlagReturn;
+            //for (RE::AttackData::AttackFlag val : attFlagVec) {
+            //    attFlagReturn = val;
+            //}
 
             // target
             auto targetREFptr = event->target;
@@ -52,7 +52,7 @@ void RegisterForEvent_Hit() {
                 // Check for weapon
                 if (weapFormType == RE::FormType::Weapon && !proj) {
                     auto attackData = actorACT->GetActorRuntimeData().currentProcess->high->attackData->data.flags;
-                    if (!attackData.any(attFlagReturn)) {
+                    if (attackData.none(kBashAttack, kChargeAttack, kContinuousAttack, kIgnoreWeapon, kNone, kOverrideData, kPowerAttack, kRotatingAttack)) {
                         if (ini.GetBoolValue("Misc", "Logs", false) == true) {
                             logger::info("kNormalAttack no bonus to Power");
                         }
