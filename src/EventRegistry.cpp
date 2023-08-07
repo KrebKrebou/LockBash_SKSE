@@ -10,30 +10,18 @@ void RegisterForEvent_Hit() {
 
                         /*target*/
                         auto targetREFptr = event->target;
-                        //auto targetREF = targetREFptr->AsReference();
-                        //auto targetName = targetREFptr->GetBaseObject()->GetName();
-                        //auto targetFormType = targetREFptr->GetBaseObject()->GetFormType();
-
                         /*actor*/
                         auto actorREFptr = event->cause;
                         auto actorACT = actorREFptr->As<RE::Actor>();
-                        //auto actorREF = actorREFptr->AsReference();
-                        //auto actorName = actorREFptr->GetBaseObject()->GetName();
-
                         /*actorvalues*/
                         auto Health = actorACT->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
                         auto Stamina = actorACT->AsActorValueOwner()->GetBaseActorValue(RE::ActorValue::kHealth);
                         auto Power = Health + Stamina;
                         if (ini.GetLongValue("Gameplay", "Formula", 1) == 1) {Power = 2 * Health + Stamina;}
-
                         /*weapons*/
                         auto weap = RE::TESForm::LookupByID(event->source);
                         auto weapFormType = weap->GetFormType();
                         auto proj = event->projectile;
-                        //auto weapWEAP = weap->As<RE::TESObjectWEAP>();
-                        //auto weapState = actorACT->AsActorState()->GetWeaponState();
-                        //auto attackState = actorACT->AsActorState()->GetAttackState();
-
                         /*attacktypes*/
                         auto kBashAttack = RE::AttackData::AttackFlag::kBashAttack;
                         auto kChargeAttack = RE::AttackData::AttackFlag::kChargeAttack;
@@ -78,3 +66,13 @@ void RegisterForEvent_Hit() {
     RE::ScriptEventSourceHolder::GetSingleton()->AddEventSink(new EventSink);
     delete new EventSink;
 }
+
+//auto targetREF = targetREFptr->AsReference();
+//auto targetName = targetREFptr->GetBaseObject()->GetName();
+//auto targetFormType = targetREFptr->GetBaseObject()->GetFormType();
+//auto actorREF = actorREFptr->AsReference();
+//auto actorName = actorREFptr->GetBaseObject()->GetName();
+//auto weapWEAP = weap->As<RE::TESObjectWEAP>();
+//auto weapState = actorACT->AsActorState()->GetWeaponState();
+//auto attackState = actorACT->AsActorState()->GetAttackState();
+

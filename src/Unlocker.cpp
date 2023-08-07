@@ -6,13 +6,13 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
 
         auto keywordNPC = RE::BGSKeyword::LookupByID<RE::BGSKeyword>(0x0013794);
         if (!ref.IsPlayerRef() && ref.GetFormType() == RE::FormType::ActorCharacter && ref.HasKeyword(keywordNPC)) {
-            auto plyFAC = RE::TESForm::LookupByID<RE::TESFaction>(0x0000DB1);
+            //auto plyFAC = RE::TESForm::LookupByID<RE::TESFaction>(0x0000DB1);
             auto refACT = ref.As<RE::Actor>();
             auto refFAC = refACT->GetCrimeFaction();
             auto refDetection = refACT->RequestDetectionLevel(act); // 0=Undetected 10=VeryLow 20=Low 30=Normal 40=High 50=Critical
             auto refMorality = refACT->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMorality); //0=AnyCrime 1=CrimeAgainstEnemy 2=ProperyCrime 3=NoCrime
             auto crimeItem = RE::TESForm::LookupByID(0x000000f);
-            auto crimeGold = 25;
+            auto crimeGold = 50;
             if (refFAC != nullptr) {
                 crimeGold = refFAC->crimeData.crimevalues.pickpocketCrimeGold / refFAC->crimeData.crimevalues.stealCrimeGoldMult;
             }
@@ -66,9 +66,8 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                     // Faction Check
                     if (owner == refFAC) {
                         if (refACT->IsGuard()) {
-                            if (ini.GetBoolValue("Misc", "Logs", false) == true) {
-                                logger::info("{} fac_report {}", refACT->GetName(), refDetection);
-                            }
+                            if (ini.GetBoolValue("Misc", "Logs", false) == true) 
+                            {logger::info("{} fac_report {}", refACT->GetName(), refDetection);}
                             act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
                             detCount++;
                             return RE::BSContainer::ForEachResult::kStop;
@@ -77,17 +76,15 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                     }
                     else if (owner != refFAC) {
                         if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                            if (ini.GetBoolValue("Misc", "Logs", false) == true) {
-                                logger::info("{} owner_report {}", refACT->GetName(), refDetection);
-                            }
+                            if (ini.GetBoolValue("Misc", "Logs", false) == true) 
+                            {logger::info("{} owner_report {}", refACT->GetName(), refDetection);}
                             act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
                             detCount++;
                             return RE::BSContainer::ForEachResult::kStop;
                         }
                         else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                            if (ini.GetBoolValue("Misc", "Logs", false) == true) {
-                                logger::info("{} non-owner_report {}", refACT->GetName(), refDetection);
-                            }
+                            if (ini.GetBoolValue("Misc", "Logs", false) == true) 
+                            {logger::info("{} non-owner_report {}", refACT->GetName(), refDetection);}
                             act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
                             detCount++;
                             return RE::BSContainer::ForEachResult::kStop;
@@ -99,17 +96,15 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                     // Faction Check
                     if (owner != refFAC) {
                         if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                            if (ini.GetBoolValue("Misc", "Logs", false) == true) {
-                                logger::info("{} lowM_report {}", refACT->GetName(), refMorality);
-                            }
+                            if (ini.GetBoolValue("Misc", "Logs", false) == true) 
+                            {logger::info("{} lowM_report {}", refACT->GetName(), refMorality);}
                             act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
                             detCount++;
                             return RE::BSContainer::ForEachResult::kStop;
                         }
                         else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                            if (ini.GetBoolValue("Misc", "Logs", false) == true) {
-                                logger::info("{} lowM_no_report {}", refACT->GetName(), refMorality);
-                            }
+                            if (ini.GetBoolValue("Misc", "Logs", false) == true) 
+                            {logger::info("{} lowM_no_report {}", refACT->GetName(), refMorality);}
                             //detCount++;
                             return RE::BSContainer::ForEachResult::kStop;
                         }
@@ -133,12 +128,8 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         timer_thread.join();
 
         if (ini.GetBoolValue("Misc", "Notifications", false) == true) {
-            if (act->As<RE::Actor>()->IsPlayerRef()) {
-                RE::DebugNotification("Lock broken");
-            }
-            else if (act->As<RE::Actor>()->IsPlayerTeammate()) {
-                RE::DebugNotification(BreakMsg);
-            }
+            if (act->As<RE::Actor>()->IsPlayerRef()) {RE::DebugNotification("Lock broken");}
+            else if (act->As<RE::Actor>()->IsPlayerTeammate()) {RE::DebugNotification(BreakMsg);}
         }
 
         RE::PlaySound("TRPTripwireSD");
@@ -155,12 +146,8 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         timer_thread.join();
 
         if (ini.GetBoolValue("Misc", "Notifications", false) == true) {
-            if (act->As<RE::Actor>()->IsPlayerRef()) {
-                RE::DebugNotification("Can't break lock");
-            }
-            else if (act->As<RE::Actor>()->IsPlayerTeammate()) {
-                RE::DebugNotification(noBreakMsg);
-            }
+            if (act->As<RE::Actor>()->IsPlayerRef()) {RE::DebugNotification("Can't break lock");}
+            else if (act->As<RE::Actor>()->IsPlayerTeammate()) {RE::DebugNotification(noBreakMsg);}
         }
 
         RE::PlaySound("DRSLockedSD");
@@ -176,12 +163,8 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         timer_thread.join();
 
         if (ini.GetBoolValue("Misc", "Notifications", false) == true) {
-            if (act->As<RE::Actor>()->IsPlayerRef()) {
-                RE::DebugNotification("Already unlocked");
-            }
-            else if (act->As<RE::Actor>()->IsPlayerTeammate()) {
-                RE::DebugNotification(noBreakMsg);
-            }
+            if (act->As<RE::Actor>()->IsPlayerRef()) {RE::DebugNotification("Already unlocked");}
+            else if (act->As<RE::Actor>()->IsPlayerTeammate()) {RE::DebugNotification(noBreakMsg);}
         }
 
         // RE::PlaySound("DRSLockedSD");
@@ -197,12 +180,8 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         timer_thread.join();
 
         if (ini.GetBoolValue("Misc", "Notifications", false) == true) {
-            if (act->As<RE::Actor>()->IsPlayerRef()) {
-                RE::DebugNotification("Needs a key to unlock");
-            }
-            else if (act->As<RE::Actor>()->IsPlayerTeammate()) {
-                RE::DebugNotification(noBreakMsg);
-            }
+            if (act->As<RE::Actor>()->IsPlayerRef()) {RE::DebugNotification("Needs a key to unlock");}
+            else if (act->As<RE::Actor>()->IsPlayerTeammate()) {RE::DebugNotification(noBreakMsg);}
         }
 
         RE::PlaySound("DRSLockedSD");
@@ -217,12 +196,8 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
         timer_thread.join();
 
         if (ini.GetBoolValue("Misc", "Notifications", false) == true) {
-            if (act->As<RE::Actor>()->IsPlayerRef()) {
-                RE::DebugNotification("Lock won't budge");
-            }
-            else if (act->As<RE::Actor>()->IsPlayerTeammate()) {
-                RE::DebugNotification(noBreakMsg);
-            }
+            if (act->As<RE::Actor>()->IsPlayerRef()) {RE::DebugNotification("Lock won't budge");}
+            else if (act->As<RE::Actor>()->IsPlayerTeammate()) {RE::DebugNotification(noBreakMsg);}
         }
 
         RE::PlaySound("DRSLockedSD");
@@ -232,7 +207,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
 
 }
 
-void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float pwr, int radius) {
+void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float pwr, float radius) {
 
     float p_kVEasy = 100;
     float p_kEasy = 200;
