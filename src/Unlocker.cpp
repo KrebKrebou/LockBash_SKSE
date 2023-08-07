@@ -108,8 +108,8 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                             //detCount++;
                             return RE::BSContainer::ForEachResult::kStop;
                         }
-                    }
-                }  // for lower moralities paste here  // for lower moralities paste here
+                    }  // for lower moralities, use below line
+                }
             }
         }
         return RE::BSContainer::ForEachResult::kContinue;
