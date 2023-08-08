@@ -16,8 +16,8 @@ void RegisterForEvent_Hit() {
                         /*actorvalues*/
                         auto Health = actorACT->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
                         auto Stamina = actorACT->AsActorValueOwner()->GetBaseActorValue(RE::ActorValue::kStamina);
-                        auto Power = Health + Stamina;
-                        if (ini.GetLongValue("Gameplay", "Difficulty", 1) == 1) { Power = (1.5 * Health) + Stamina; }
+                        auto Power = (1.5 * Health) + Stamina;
+
                         /*weapons*/
                         auto weap = RE::TESForm::LookupByID(event->source);
                         auto proj = event->projectile;
