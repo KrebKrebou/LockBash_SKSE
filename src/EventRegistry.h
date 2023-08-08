@@ -1,4 +1,4 @@
 #pragma once
-#include "Unlocker.h"
+#include "WeapDetect.h"
 
 void RegisterForEvent_Hit();
