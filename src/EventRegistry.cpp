@@ -59,7 +59,6 @@ void RegisterForEvent_Hit() {
                                     } else if (ini.GetLongValue("Gameplay", "Weapon Detection", 1) == 2) {
                                         SkillDetection(weapSkill);
                                     }
-                                HybridDetection(weapSkill, weapWEAP, weapType);
                                 LockCheck(targetREFptr, actorREFptr, 1500);
                            }
                            else if (attackData.any(kPowerAttack)) {
@@ -70,7 +69,6 @@ void RegisterForEvent_Hit() {
                                     } else if (ini.GetLongValue("Gameplay", "Weapon Detection", 1) == 2) {
                                         SkillDetection(weapSkill);
                                     }
-                                HybridDetection(weapSkill, weapWEAP, weapType);
                                 LockCheck(targetREFptr, actorREFptr, 1750);
                            }
                         }
