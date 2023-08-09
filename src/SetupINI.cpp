@@ -26,7 +26,7 @@ void SetupINI() {
         ini.SetLongValue("Custom", "Very Hard", 850, NULL, false, true);
 
         ini.SetBoolValue("Misc", "Notifications", false, notificationCom, true);
-        ini.SetBoolValue("Misc", "Logs", false, logsCom, true);
+        ini.SetBoolValue("Misc", "Logs", true, logsCom, true);
 
         ini.SaveFile("Data\\SKSE\\Plugins\\LockBashSKSE.ini");
         ini.Reset();
