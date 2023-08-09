@@ -16,7 +16,7 @@ void RegisterForEvent_Hit() {
                         /*actorvalues*/
                         auto Health = actorACT->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
                         auto Stamina = actorACT->AsActorValueOwner()->GetBaseActorValue(RE::ActorValue::kStamina);
-                        auto Power = (1.5 * Health) + Stamina;
+                        Power = (1.5 * Health) + Stamina;
 
                         /*weapons*/
                         auto weap = RE::TESForm::LookupByID(event->source);
@@ -45,33 +45,33 @@ void RegisterForEvent_Hit() {
                               if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Attack Type: kNormalAttack"); }
                                     Power = Power * 1;
                                     if (ini.GetLongValue("Gameplay", "Weapon Detection", 1) == 1) {
-                                        HybridDetection(weapSkill, weapWEAP, weapType, Power);
+                                        HybridDetection(weapSkill, weapWEAP, weapType);
                                     } else if (ini.GetLongValue("Gameplay", "Weapon Detection", 1) == 2) {
-                                        SkillDetection(weapSkill, Power);
+                                        SkillDetection(weapSkill);
                                     }
-                                LockCheck(targetREFptr, actorREFptr, Power, 1000);
+                                LockCheck(targetREFptr, actorREFptr, 1000);
                            }
                            else if (attackData.any(kBashAttack)) {
                               if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Attack Type: kBashAttack"); }
                                     Power = Power * 1.1;
                                     if (ini.GetLongValue("Gameplay", "Weapon Detection", 1) == 1) {
-                                        HybridDetection(weapSkill, weapWEAP, weapType, Power);
+                                        HybridDetection(weapSkill, weapWEAP, weapType);
                                     } else if (ini.GetLongValue("Gameplay", "Weapon Detection", 1) == 2) {
-                                        SkillDetection(weapSkill, Power);
+                                        SkillDetection(weapSkill);
                                     }
-                                HybridDetection(weapSkill, weapWEAP, weapType, Power);
-                                LockCheck(targetREFptr, actorREFptr, Power, 1500);
+                                HybridDetection(weapSkill, weapWEAP, weapType);
+                                LockCheck(targetREFptr, actorREFptr, 1500);
                            }
                            else if (attackData.any(kPowerAttack)) {
                               if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Attack Type: kPowerAttack"); }
                                     Power = Power * 1.2;
                                     if (ini.GetLongValue("Gameplay", "Weapon Detection", 1) == 1) {
-                                        HybridDetection(weapSkill, weapWEAP, weapType, Power);
+                                        HybridDetection(weapSkill, weapWEAP, weapType);
                                     } else if (ini.GetLongValue("Gameplay", "Weapon Detection", 1) == 2) {
-                                        SkillDetection(weapSkill, Power);
+                                        SkillDetection(weapSkill);
                                     }
-                                HybridDetection(weapSkill, weapWEAP, weapType, Power);
-                                LockCheck(targetREFptr, actorREFptr, Power, 1750);
+                                HybridDetection(weapSkill, weapWEAP, weapType);
+                                LockCheck(targetREFptr, actorREFptr, 1750);
                            }
                         }
                     }

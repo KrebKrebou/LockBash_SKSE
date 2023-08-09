@@ -226,7 +226,7 @@ void TryUnlock(int milliseconds, RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr 
 
 }
 
-void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float pwr, float radius) {
+void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float radius) {
 
     float p_kVEasy = 200;
     float p_kEasy = 300;
@@ -251,7 +251,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
 
     switch (refPtr->GetLockLevel()) {
     case RE::LOCK_LEVEL::kVeryEasy:
-        if (pwr >= p_kVEasy) {
+        if (Power >= p_kVEasy) {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
@@ -265,7 +265,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
         }
         break;
     case RE::LOCK_LEVEL::kEasy:
-        if (pwr >= p_kEasy) {
+        if (Power >= p_kEasy) {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
@@ -279,7 +279,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
         }
         break;
     case RE::LOCK_LEVEL::kAverage:
-        if (pwr >= p_kAverage) {
+        if (Power >= p_kAverage) {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
@@ -293,7 +293,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
         }
         break;
     case RE::LOCK_LEVEL::kHard:
-        if (pwr >= p_kHard) {
+        if (Power >= p_kHard) {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
@@ -307,7 +307,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
         }
         break;
     case RE::LOCK_LEVEL::kVeryHard:
-        if (pwr >= p_kVHard) {
+        if (Power >= p_kVHard) {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
@@ -321,7 +321,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
         }
         break;
     case RE::LOCK_LEVEL::kUnlocked:
-        if (pwr >= 0 || pwr <= 0) {
+        if (Power >= 0 || Power <= 0) {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 2);
             unlock_thread.detach();
             unlock_thread.~thread();
@@ -331,7 +331,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
         }
         break;
     case RE::LOCK_LEVEL::kRequiresKey:
-        if (pwr >= 0 || pwr <= 0) {
+        if (Power >= 0 || Power <= 0) {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 3);
             unlock_thread.detach();
             unlock_thread.~thread();
@@ -339,7 +339,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float p
         }
         break;
     default:
-        if (pwr >= 0 || pwr <= 0) {
+        if (Power >= 0 || Power <= 0) {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 4);
             unlock_thread.detach();
             unlock_thread.~thread();

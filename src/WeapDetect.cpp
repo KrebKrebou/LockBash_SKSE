@@ -1,6 +1,6 @@
 #include "WeapDetect.h"
 
-//void AttackDataCheck(SKSE::stl::enumeration<RE::AttackData::AttackFlag, uint32_t> attackData, RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float pwr){
+//void AttackDataCheck(SKSE::stl::enumeration<RE::AttackData::AttackFlag, uint32_t> attackData, RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float Power){
 //    /*attacktypes*/
 //    auto kBashAttack = RE::AttackData::AttackFlag::kBashAttack;
 //    auto kChargeAttack = RE::AttackData::AttackFlag::kChargeAttack;
@@ -13,22 +13,22 @@
 //
 //    if (attackData.none(kBashAttack, kChargeAttack, kContinuousAttack, kIgnoreWeapon, kNone, kOverrideData, kPowerAttack, kRotatingAttack)) {
 //        if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Attack Type: kNormalAttack"); }
-//        pwr = pwr * 1;
-//        LockCheck(refPtr, actPtr, pwr, 1000);
+//        Power = Power * 1;
+//        LockCheck(refPtr, actPtr, Power, 1000);
 //    }
 //    else if (attackData.any(kBashAttack)) {
 //        if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Attack Type: kBashAttack"); }
-//        pwr = pwr * 1.2;
-//        LockCheck(refPtr, actPtr, pwr, 1500);
+//        Power = Power * 1.2;
+//        LockCheck(refPtr, actPtr, Power, 1500);
 //    }
 //    else if (attackData.any(kPowerAttack)) {
 //        if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Attack Type: kPowerAttack"); }
-//        pwr = pwr * 1.3;
-//        LockCheck(refPtr, actPtr, pwr, 1750);
+//        Power = Power * 1.3;
+//        LockCheck(refPtr, actPtr, Power, 1750);
 //    }
 //}
 
-void HybridDetection(SKSE::stl::enumeration<RE::ActorValue, uint32_t> weapSkill, RE::TESObjectWEAP* weap, RE::WEAPON_TYPE weapType, float pwr){
+void HybridDetection(SKSE::stl::enumeration<RE::ActorValue, uint32_t> weapSkill, RE::TESObjectWEAP* weap, RE::WEAPON_TYPE weapType){
 
     // hybrid system
     if (weapSkill.get() == RE::ActorValue::kNone) {
@@ -36,11 +36,11 @@ void HybridDetection(SKSE::stl::enumeration<RE::ActorValue, uint32_t> weapSkill,
          switch (weap->GetWeaponType()) {
          case RE::WEAPON_TYPE::kHandToHandMelee:
              if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kHandToHandMelee"); }
-             pwr = pwr - 100;
+             Power = Power - 100;
              break;
          default:
              if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: defaultNone"); }
-             pwr = pwr - 75;
+             Power = Power - 75;
              break;
          }     
     }
@@ -50,27 +50,27 @@ void HybridDetection(SKSE::stl::enumeration<RE::ActorValue, uint32_t> weapSkill,
          switch(weap->GetWeaponType()){
          case RE::WEAPON_TYPE::kHandToHandMelee:
              if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kHandToHandMelee"); }
-             pwr = pwr - 100;
+             Power = Power - 100;
              break;
          case RE::WEAPON_TYPE::kOneHandDagger:
              if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kOneHandDagger"); }
-             pwr = pwr - 50;
+             Power = Power - 50;
              break;
          case RE::WEAPON_TYPE::kOneHandSword:
              if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kOneHandSword"); }
-             pwr = pwr + 25;
+             Power = Power + 25;
              break;
          case RE::WEAPON_TYPE::kOneHandAxe:
              if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kOneHandAxe"); }
-             pwr = pwr + 50;
+             Power = Power + 50;
              break;
          case RE::WEAPON_TYPE::kOneHandMace:
              if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kOneHandMace"); }
-             pwr = pwr + 75;
+             Power = Power + 75;
              break;
          default:
              if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: defaultOneHand"); }
-             pwr = pwr + 0;
+             Power = Power + 0;
              break;
          }
     }
@@ -80,38 +80,38 @@ void HybridDetection(SKSE::stl::enumeration<RE::ActorValue, uint32_t> weapSkill,
          switch (weap->GetWeaponType()) {
          case RE::WEAPON_TYPE::kTwoHandSword:
              if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kTwoHandSword"); }
-             pwr = pwr + 100;
+             Power = Power + 100;
              break;
          case RE::WEAPON_TYPE::kTwoHandAxe:
              if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kTwoHandAxe / Warhammer"); }
-             pwr = pwr + 125;
+             Power = Power + 125;
              break;
          default:
              if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: defaultTwoHand"); }
-             pwr = pwr + 75;
+             Power = Power + 75;
              break;
          }
     }
-    if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Power = {}", pwr); }
+    if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Power = {}", Power); }
 }
 
-void SkillDetection(SKSE::stl::enumeration<RE::ActorValue, uint32_t> weapSkill, float pwr) {
+void SkillDetection(SKSE::stl::enumeration<RE::ActorValue, uint32_t> weapSkill) {
     // by governing skill
     if (weapSkill.get() == RE::ActorValue::kNone) {
         if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Unarmed"); }
-        pwr = pwr - 75;
+        Power = Power - 75;
     }
     else if (weapSkill.get() == RE::ActorValue::kOneHanded) {
         if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("OneHanded"); }
-        pwr = pwr + 0;
+        Power = Power + 0;
     }
     else if (weapSkill.get() == RE::ActorValue::kTwoHanded) {
         if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("TwoHanded"); }
-        pwr = pwr + 75;
+        Power = Power + 75;
     }
 }
 
-//void KeywordDetection(RE::TESObjectWEAP *weap, float pwr){
+//void KeywordDetection(RE::TESObjectWEAP *weap, float Power){
 //    // by keyword
 //    if (weap->HasKeywordString("WeapTypeDagger") || weap->HasKeywordString("WeapTypeCestus") || weap->HasKeywordString("WeapTypeClaw")) {
 //        if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Keyword: Dagger / Cestus / Claw"); }
@@ -142,42 +142,42 @@ void SkillDetection(SKSE::stl::enumeration<RE::ActorValue, uint32_t> weapSkill, 
 //    }
 //}
 //
-//void AnimTypeDetection(RE::WEAPON_TYPE weapType, float pwr){
+//void AnimTypeDetection(RE::WEAPON_TYPE weapType, float Power){
 //    // by anim type
 //if (weapType == RE::WEAPON_TYPE::kHandToHandMelee) {
 //    if (ini.GetBoolValue("Misc", "Logs", false) == true)
 //    { logger::info("H2H -100 Power"); }
-//    pwr = pwr - 100;
+//    Power = Power - 100;
 //}
 //else if (weapType == RE::WEAPON_TYPE::kOneHandDagger) {
 //    if (ini.GetBoolValue("Misc", "Logs", false) == true)
 //    { logger::info("1HDagger -75 Power"); }
-//    pwr = pwr - 75;
+//    Power = Power - 75;
 //}
 //else if (weapType == RE::WEAPON_TYPE::kOneHandSword) {
 //    if (ini.GetBoolValue("Misc", "Logs", false) == true)
 //    { logger::info("1HSword -25 Power"); }
-//    pwr = pwr - 25;
+//    Power = Power - 25;
 //}
 //else if (weapType == RE::WEAPON_TYPE::kOneHandAxe) {
 //    if (ini.GetBoolValue("Misc", "Logs", false) == true)
 //    { logger::info("1HAxe +25 Power"); }
-//    pwr = pwr + 25;
+//    Power = Power + 25;
 //}
 //else if (weapType == RE::WEAPON_TYPE::kOneHandMace) {
 //    if (ini.GetBoolValue("Misc", "Logs", false) == true)
 //    { logger::info("1HMace +50 Power"); }
-//    pwr = pwr + 50;
+//    Power = Power + 50;
 //}
 //else if (weapType == RE::WEAPON_TYPE::kTwoHandSword) {
 //    if (ini.GetBoolValue("Misc", "Logs", false) == true)
 //    { logger::info("2HSword +75 Power"); }
-//    pwr = pwr + 75;
+//    Power = Power + 75;
 //}
 //else if (weapType == RE::WEAPON_TYPE::kTwoHandAxe) {
 //    if (ini.GetBoolValue("Misc", "Logs", false) == true)
 //    { logger::info("2HAxe +100 Power"); }
-//    pwr = pwr + 100;
+//    Power = Power + 100;
 //}
 //}
 
