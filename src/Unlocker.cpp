@@ -3,33 +3,41 @@
 void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
 
     if (ini.GetBoolValue("Gameplay", "Crime", true) == true) {
-        /*if (act->GetActorRuntimeData().)*/
+        std::thread timer_thread(timer, 1000);
+        timer_thread.join();
+        timer_thread.~thread();
 
         int detCount = 0;
         RE::TES::GetSingleton()->ForEachReferenceInRange(center, radius, [act, center, &detCount](RE::TESObjectREFR& ref) {
 
             auto keywordNPC = RE::BGSKeyword::LookupByID<RE::BGSKeyword>(0x0013794);
-            if (/*ref.As<RE::Actor>() != act && */!ref.IsPlayerRef() && ref.GetFormType() == RE::FormType::ActorCharacter && ref.HasKeyword(keywordNPC) && !ref.IsDead()) {
+            if (!ref.IsPlayerRef() && ref.GetFormType() == RE::FormType::ActorCharacter && ref.HasKeyword(keywordNPC)) {
+                if (ref.As<RE::Actor>() != act && !ref.IsDead()) {
+                    auto refACT = ref.As<RE::Actor>();
+                    auto refFAC = refACT->GetCrimeFaction();
+                    auto refDetection = refACT->RequestDetectionLevel(act); // 0=Undetected 10=VeryLow 20=Low 30=Normal 40=High 50=Critical
+                    auto refMorality = refACT->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMorality); //0=AnyCrime 1=CrimeAgainstEnemy 2=ProperyCrime 3=NoCrime
+                    auto crimeItem = RE::TESForm::LookupByID(0x000000f);
+                    auto crimeGold = 50;
+                    if (refFAC != nullptr) {
+                        crimeGold = refFAC->crimeData.crimevalues.pickpocketCrimeGold / refFAC->crimeData.crimevalues.stealCrimeGoldMult;
+                    }
 
-                auto refACT = ref.As<RE::Actor>();
-                auto refFAC = refACT->GetCrimeFaction();
-                auto refDetection = refACT->RequestDetectionLevel(act); // 0=Undetected 10=VeryLow 20=Low 30=Normal 40=High 50=Critical
-                auto refMorality = refACT->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMorality); //0=AnyCrime 1=CrimeAgainstEnemy 2=ProperyCrime 3=NoCrime
-                auto crimeItem = RE::TESForm::LookupByID(0x000000f);
-                auto crimeGold = 50;
-                if (refFAC != nullptr) {
-                    crimeGold = refFAC->crimeData.crimevalues.pickpocketCrimeGold / refFAC->crimeData.crimevalues.stealCrimeGoldMult;
-                }
-
-                //Getting Owner
-                auto owner = center->GetOwner();
-                if (!owner) {
-                    if (center->GetFormType() == RE::FormType::Door) {
-                        if (auto Teleport = center->extraList.GetByType<RE::ExtraTeleport>()) {
-                            if (auto TeleportData = Teleport->teleportData) {
-                                if (auto DoorREF = TeleportData->linkedDoor.get()) {
-                                    if (auto CellREF = DoorREF->GetParentCell()) {
-                                        owner = CellREF->GetOwner();
+                    //Getting Owner
+                    auto owner = center->GetOwner();
+                    if (!owner) {
+                        if (center->GetFormType() == RE::FormType::Door) {
+                            if (auto Teleport = center->extraList.GetByType<RE::ExtraTeleport>()) {
+                                if (auto TeleportData = Teleport->teleportData) {
+                                    if (auto DoorREF = TeleportData->linkedDoor.get()) {
+                                        if (auto CellREF = DoorREF->GetParentCell()) {
+                                            owner = CellREF->GetOwner();
+                                        }
+                                        else {
+                                            if (refFAC != nullptr) {
+                                                owner = refFAC;
+                                            }
+                                        }
                                     }
                                     else {
                                         if (refFAC != nullptr) {
@@ -55,83 +63,78 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                             }
                         }
                     }
-                    else {
-                        if (refFAC != nullptr) {
-                            owner = refFAC;
-                        }
-                    }
-                }
 
 
-                // Detection Check
-                if (refDetection > 0 && detCount == 0) {
-                    if (owner != nullptr) {
-                        if (refMorality == 3 || refMorality == 1) {
+                    // Detection Check
+                    if (refDetection > 0 && detCount == 0) {
+                        if (owner != nullptr) {
+                            if (refMorality == 3 || refMorality == 1) {
 
-                            // Faction Check
-                            if (owner == refFAC) {
-                                if (!owner->As<RE::TESFaction>()->IgnoresStealing() || !owner->As<RE::TESFaction>()->IgnoresTrespass()) {
-                                    if (refACT->IsGuard()) {
+                                // Faction Check
+                                if (owner == refFAC) {
+                                    if (!owner->As<RE::TESFaction>()->IgnoresStealing() || !owner->As<RE::TESFaction>()->IgnoresTrespass()) {
+                                        if (refACT->IsGuard()) {
+                                            if (ini.GetBoolValue("Misc", "Logs", false) == true)
+                                            {
+                                                logger::info("{} fac_report {}", refACT->GetName(), refDetection);
+                                            }
+                                            act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                                            //refACT->GetActorRuntimeData().currentProcess->SetActorsDetectionEvent(act, center->GetPosition(), 100, center);
+                                            detCount++;
+                                            return RE::BSContainer::ForEachResult::kStop;
+                                        }
+                                    }
+                                }
+                                else if (owner != refFAC) {
+                                    if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
                                         if (ini.GetBoolValue("Misc", "Logs", false) == true)
                                         {
-                                            logger::info("{} fac_report {}", refACT->GetName(), refDetection);
+                                            logger::info("{} owner_report {}", refACT->GetName(), refDetection);
+                                        }
+                                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+                                        detCount++;
+                                        return RE::BSContainer::ForEachResult::kStop;
+                                    }
+                                    else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
+                                        if (ini.GetBoolValue("Misc", "Logs", false) == true)
+                                        {
+                                            logger::info("{} non-owner_report {}", refACT->GetName(), refDetection);
                                         }
                                         act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
-                                        //refACT->GetActorRuntimeData().currentProcess->SetActorsDetectionEvent(act, center->GetPosition(), 100, center);
                                         detCount++;
                                         return RE::BSContainer::ForEachResult::kStop;
                                     }
                                 }
                             }
-                            else if (owner != refFAC) {
-                                if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                                    if (ini.GetBoolValue("Misc", "Logs", false) == true)
-                                    {
-                                        logger::info("{} owner_report {}", refACT->GetName(), refDetection);
-                                    }
-                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
-                                    detCount++;
-                                    return RE::BSContainer::ForEachResult::kStop;
-                                }
-                                else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                                    if (ini.GetBoolValue("Misc", "Logs", false) == true)
-                                    {
-                                        logger::info("{} non-owner_report {}", refACT->GetName(), refDetection);
-                                    }
-                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
-                                    detCount++;
-                                    return RE::BSContainer::ForEachResult::kStop;
-                                }
-                            }
-                        }
 
-                        else if (refMorality == 0 || refMorality == 2) {
-                            // Faction Check
-                            if (owner != refFAC) {
-                                if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                                    if (ini.GetBoolValue("Misc", "Logs", false) == true)
-                                    {
-                                        logger::info("{} lowM_report {}", refACT->GetName(), refMorality);
+                            else if (refMorality == 0 || refMorality == 2) {
+                                // Faction Check
+                                if (owner != refFAC) {
+                                    if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
+                                        if (ini.GetBoolValue("Misc", "Logs", false) == true)
+                                        {
+                                            logger::info("{} lowM_report {}", refACT->GetName(), refMorality);
+                                        }
+                                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+                                        detCount++;
+                                        return RE::BSContainer::ForEachResult::kStop;
                                     }
-                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
-                                    detCount++;
-                                    return RE::BSContainer::ForEachResult::kStop;
-                                }
-                                else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                                    if (ini.GetBoolValue("Misc", "Logs", false) == true)
-                                    {
-                                        logger::info("{} lowM_no_report {}", refACT->GetName(), refMorality);
+                                    else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
+                                        if (ini.GetBoolValue("Misc", "Logs", false) == true)
+                                        {
+                                            logger::info("{} lowM_no_report {}", refACT->GetName(), refMorality);
+                                        }
+                                        //detCount++;
+                                        return RE::BSContainer::ForEachResult::kContinue;
                                     }
-                                    //detCount++;
-                                    return RE::BSContainer::ForEachResult::kContinue;
-                                }
-                            }  // for lower moralities, use below line
+                                }  // for lower moralities, use below line
+                            }
                         }
                     }
                 }
             }
-            return RE::BSContainer::ForEachResult::kContinue;
-            });
+                return RE::BSContainer::ForEachResult::kContinue;
+        });
     }
 }
 
@@ -255,13 +258,18 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            std::thread crime_thread(CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            crime_thread.detach();
+            crime_thread.~thread();
+            //CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
         }
         else {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 1);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            std::thread crime_thread(CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            crime_thread.detach();
+            crime_thread.~thread();
         }
         break;
     case RE::LOCK_LEVEL::kEasy:
@@ -269,13 +277,17 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            std::thread crime_thread(CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            crime_thread.detach();
+            crime_thread.~thread();
         }
         else {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 1);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            std::thread crime_thread(CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            crime_thread.detach();
+            crime_thread.~thread();
         }
         break;
     case RE::LOCK_LEVEL::kAverage:
@@ -283,13 +295,17 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            std::thread crime_thread(CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            crime_thread.detach();
+            crime_thread.~thread();
         }
         else {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 1);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            std::thread crime_thread(CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            crime_thread.detach();
+            crime_thread.~thread();
         }
         break;
     case RE::LOCK_LEVEL::kHard:
@@ -297,13 +313,17 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            std::thread crime_thread(CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            crime_thread.detach();
+            crime_thread.~thread();
         }
         else {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 1);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            std::thread crime_thread(CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            crime_thread.detach();
+            crime_thread.~thread();
         }
         break;
     case RE::LOCK_LEVEL::kVeryHard:
@@ -311,13 +331,17 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 0);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            std::thread crime_thread(CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            crime_thread.detach();
+            crime_thread.~thread();
         }
         else {
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 1);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            std::thread crime_thread(CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            crime_thread.detach();
+            crime_thread.~thread();
         }
         break;
     case RE::LOCK_LEVEL::kUnlocked:
@@ -326,7 +350,9 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
             unlock_thread.detach();
             unlock_thread.~thread();
             if (ini.GetBoolValue("Gameplay", "CrimeEvenIfUnlocked", false) == true) {
-                CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                std::thread crime_thread(CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                crime_thread.detach();
+                crime_thread.~thread();
             }
         }
         break;
@@ -335,7 +361,9 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 3);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            std::thread crime_thread(CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            crime_thread.detach();
+            crime_thread.~thread();
         }
         break;
     default:
@@ -343,7 +371,9 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
             std::thread unlock_thread(TryUnlock, 500, refPtr, actPtr, 4);
             unlock_thread.detach();
             unlock_thread.~thread();
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            std::thread crime_thread(CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            crime_thread.detach();
+            crime_thread.~thread();
         }
         break;
     }
