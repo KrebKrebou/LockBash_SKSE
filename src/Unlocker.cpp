@@ -9,8 +9,8 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
         RE::TES::GetSingleton()->ForEachReferenceInRange(center, radius, [act, center, &detCount](RE::TESObjectREFR& ref) {
 
             auto keywordNPC = RE::BGSKeyword::LookupByID<RE::BGSKeyword>(0x0013794);
-            if (!ref.IsPlayerRef() && ref.GetFormType() == RE::FormType::ActorCharacter && ref.HasKeyword(keywordNPC) && !ref.IsDead()) {
-                //auto plyFAC = RE::TESForm::LookupByID<RE::TESFaction>(0x0000DB1);
+            if (/*ref.As<RE::Actor>() != act && */!ref.IsPlayerRef() && ref.GetFormType() == RE::FormType::ActorCharacter && ref.HasKeyword(keywordNPC) && !ref.IsDead()) {
+
                 auto refACT = ref.As<RE::Actor>();
                 auto refFAC = refACT->GetCrimeFaction();
                 auto refDetection = refACT->RequestDetectionLevel(act); // 0=Undetected 10=VeryLow 20=Low 30=Normal 40=High 50=Critical
@@ -66,66 +66,66 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                 // Detection Check
                 if (refDetection > 0 && detCount == 0) {
                     if (owner != nullptr) {
-                        if (!owner->As<RE::TESFaction>()->IgnoresStealing() || !owner->As<RE::TESFaction>()->IgnoresTrespass()) {
-                            if (refMorality == 3 || refMorality == 1) {
+                        if (refMorality == 3 || refMorality == 1) {
 
-                                // Faction Check
-                                if (owner == refFAC) {
+                            // Faction Check
+                            if (owner == refFAC) {
+                                if (!owner->As<RE::TESFaction>()->IgnoresStealing() || !owner->As<RE::TESFaction>()->IgnoresTrespass()) {
                                     if (refACT->IsGuard()) {
                                         if (ini.GetBoolValue("Misc", "Logs", false) == true)
                                         {
                                             logger::info("{} fac_report {}", refACT->GetName(), refDetection);
                                         }
                                         act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
-                                        detCount++;
-                                        return RE::BSContainer::ForEachResult::kStop;
-                                    }
-
-                                }
-                                else if (owner != refFAC) {
-                                    if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                                        if (ini.GetBoolValue("Misc", "Logs", false) == true)
-                                        {
-                                            logger::info("{} owner_report {}", refACT->GetName(), refDetection);
-                                        }
-                                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
-                                        detCount++;
-                                        return RE::BSContainer::ForEachResult::kStop;
-                                    }
-                                    else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                                        if (ini.GetBoolValue("Misc", "Logs", false) == true)
-                                        {
-                                            logger::info("{} non-owner_report {}", refACT->GetName(), refDetection);
-                                        }
-                                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                                        //refACT->GetActorRuntimeData().currentProcess->SetActorsDetectionEvent(act, center->GetPosition(), 100, center);
                                         detCount++;
                                         return RE::BSContainer::ForEachResult::kStop;
                                     }
                                 }
                             }
-
-                            else if (refMorality == 0 || refMorality == 2) {
-                                // Faction Check
-                                if (owner != refFAC) {
-                                    if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                                        if (ini.GetBoolValue("Misc", "Logs", false) == true)
-                                        {
-                                            logger::info("{} lowM_report {}", refACT->GetName(), refMorality);
-                                        }
-                                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
-                                        detCount++;
-                                        return RE::BSContainer::ForEachResult::kStop;
+                            else if (owner != refFAC) {
+                                if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
+                                    if (ini.GetBoolValue("Misc", "Logs", false) == true)
+                                    {
+                                        logger::info("{} owner_report {}", refACT->GetName(), refDetection);
                                     }
-                                    else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                                        if (ini.GetBoolValue("Misc", "Logs", false) == true)
-                                        {
-                                            logger::info("{} lowM_no_report {}", refACT->GetName(), refMorality);
-                                        }
-                                        //detCount++;
-                                        return RE::BSContainer::ForEachResult::kStop;
+                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+                                    detCount++;
+                                    return RE::BSContainer::ForEachResult::kStop;
+                                }
+                                else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
+                                    if (ini.GetBoolValue("Misc", "Logs", false) == true)
+                                    {
+                                        logger::info("{} non-owner_report {}", refACT->GetName(), refDetection);
                                     }
-                                }  // for lower moralities, use below line
+                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                                    detCount++;
+                                    return RE::BSContainer::ForEachResult::kStop;
+                                }
                             }
+                        }
+
+                        else if (refMorality == 0 || refMorality == 2) {
+                            // Faction Check
+                            if (owner != refFAC) {
+                                if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
+                                    if (ini.GetBoolValue("Misc", "Logs", false) == true)
+                                    {
+                                        logger::info("{} lowM_report {}", refACT->GetName(), refMorality);
+                                    }
+                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+                                    detCount++;
+                                    return RE::BSContainer::ForEachResult::kStop;
+                                }
+                                else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
+                                    if (ini.GetBoolValue("Misc", "Logs", false) == true)
+                                    {
+                                        logger::info("{} lowM_no_report {}", refACT->GetName(), refMorality);
+                                    }
+                                    //detCount++;
+                                    return RE::BSContainer::ForEachResult::kContinue;
+                                }
+                            }  // for lower moralities, use below line
                         }
                     }
                 }
