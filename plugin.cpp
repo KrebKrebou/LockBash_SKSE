@@ -8,18 +8,19 @@ SKSEPluginLoad(const SKSE::LoadInterface *skse) {
 
     SKSE::log::trace("LockBashSKSE initializing!");
     INILogCheck();
-
-     ////////////////////
-    ///Add event sink///
-   ////////////////////
-   
-    RegisterForEvent_Hit();
-
     
     SKSE::GetMessagingInterface()->RegisterListener([](SKSE::MessagingInterface::Message *message){
-        if (message->type == SKSE::MessagingInterface::kDataLoaded)
+        if (message->type == SKSE::MessagingInterface::kDataLoaded) {
+
+             ////////////////////
+            ///Add event sink///
+           ////////////////////
+
+            RegisterForEvent_Hit();
 
             RE::ConsoleLog::GetSingleton()->Print("LockBashSKSE Initialized");
+
+        }
 
     });
 
