@@ -3,9 +3,8 @@
 void RegisterForEvent_Hit() {
     struct EventSink : public RE::BSTEventSink<RE::TESHitEvent> {
         RE::BSEventNotifyControl ProcessEvent(const RE::TESHitEvent* event, RE::BSTEventSource<RE::TESHitEvent>* /*source*/) {
-
-            if (event->cause.get() != nullptr) {
-                if (event->cause.get()->Is(RE::FormType::ActorCharacter)) {
+            if (event->cause) {
+                if (event->cause->Is(RE::FormType::ActorCharacter)) {
                     if (event->target->GetBaseObject()->Is(RE::FormType::Door) || event->target->GetBaseObject()->Is(RE::FormType::Container)) {
 
                         /*target*/
@@ -24,7 +23,6 @@ void RegisterForEvent_Hit() {
                         /*Check for weapon*/
                         if (!event->projectile) {
                             if (weap->GetFormType() == RE::FormType::Weapon) {
-
                                 auto attackData = actorACT->GetActorRuntimeData().currentProcess->high->attackData;
                                 if (!attackData) {
                                     return RE::BSEventNotifyControl::kContinue;
