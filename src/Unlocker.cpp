@@ -3,10 +3,6 @@
 void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
 
     if (ini.GetBoolValue("Gameplay", "Crime", true) == true) {
-        std::thread timer_thread(timer, 1000);
-        timer_thread.join();
-        timer_thread.~thread();
-
         int detCount = 0;
         RE::TES::GetSingleton()->ForEachReferenceInRange(center, radius, [act, center, &detCount](RE::TESObjectREFR& ref) {
 
@@ -64,10 +60,17 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                         }
                     }
 
+                    if (ini.GetBoolValue("Misc", "Logs", false) == true)
+                    {
+                        logger::info("{} {}", refACT->GetName(), refDetection);
+                    }
 
                     // Detection Check
                     if (refDetection > 0 && detCount == 0) {
                         if (owner != nullptr) {
+                            std::thread timer_thread(timer, 1000);
+                            timer_thread.join();
+                            timer_thread.~thread();
                             if (refMorality == 3 || refMorality == 1) {
 
                                 // Faction Check

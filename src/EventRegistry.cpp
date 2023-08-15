@@ -52,7 +52,7 @@ void RegisterForEvent_Hit() {
                                             else if (ini.GetLongValue("Gameplay", "Weapon Detection", 1) == 2) {
                                                 SkillDetection(weapSkill);
                                             }
-                                            LockCheck(targetREFptr, actorREFptr, 1000);
+                                            LockCheck(targetREFptr, actorREFptr, 1500);
                                         }
                                         else if (attackData->data.flags.any(kBashAttack)) {
                                             if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Attack Type: kBashAttack"); }
@@ -63,7 +63,7 @@ void RegisterForEvent_Hit() {
                                             else if (ini.GetLongValue("Gameplay", "Weapon Detection", 1) == 2) {
                                                 SkillDetection(weapSkill);
                                             }
-                                            LockCheck(targetREFptr, actorREFptr, 1500);
+                                            LockCheck(targetREFptr, actorREFptr, 1700);
                                         }
                                         else if (attackData->data.flags.any(kPowerAttack)) {
                                             if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Attack Type: kPowerAttack"); }
@@ -74,7 +74,7 @@ void RegisterForEvent_Hit() {
                                             else if (ini.GetLongValue("Gameplay", "Weapon Detection", 1) == 2) {
                                                 SkillDetection(weapSkill);
                                             }
-                                            LockCheck(targetREFptr, actorREFptr, 1750);
+                                            LockCheck(targetREFptr, actorREFptr, 2000);
                                         }
                                     }
                                 }
