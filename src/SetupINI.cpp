@@ -35,34 +35,34 @@ void SetupINI() {
 }
 
 void INILogCheck() {
-
     if (ini.GetLongValue("Gameplay", "Difficulty", 1) == 1) {
-        logger::info("Difficulty: Requiem-like");
+        logger::trace("Difficulty: Requiem-like");
     } else if (ini.GetLongValue("Gameplay", "Difficulty", 1) == 2) {
-        logger::info("Difficulty: Custom");
+        logger::trace("Difficulty: Custom");
     }
 
     if (ini.GetBoolValue("Gameplay", "Crime", true) == true) {
-        logger::info("Crime: On");
+        logger::trace("Crime: On");
     } else if (ini.GetBoolValue("Gameplay", "Crime", true) == false) {
-        logger::info("Crime: Off");
+        logger::trace("Crime: Off");
     }
 
     if (ini.GetLongValue("Gameplay", "Weapon Detection", 1) == 1) {
-        logger::info("Weapon Detection: Hybrid");
+        logger::trace("Weapon Detection: Hybrid");
     } else if (ini.GetLongValue("Gameplay", "Weapon Detection", 1) == 2) {
-        logger::info("Weapon Detection: Skill");
+        logger::trace("Weapon Detection: Skill");
     } 
 
     if (ini.GetBoolValue("Misc", "Notifications", false) == true) {
-        logger::info("Notifications: On");
+        logger::trace("Notifications: On");
     } else if (ini.GetBoolValue("Misc", "Notifications", false) == false) {
-        logger::info("Notifications: Off");
+        logger::trace("Notifications: Off");
     }
 
     if (ini.GetBoolValue("Misc", "Logs", false) == true) {
-        logger::info("Logs: On");
+        logger::trace("Logs: On");
     } else if (ini.GetBoolValue("Misc", "Logs", false) == false) {
-        logger::info("Logs: Off");
+        logger::trace("Logs: Off");
     }
+    logger::debug("-*-");
 }

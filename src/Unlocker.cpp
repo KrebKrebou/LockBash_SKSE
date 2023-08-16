@@ -15,9 +15,9 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                         auto refDetection = refACT->RequestDetectionLevel(act); // 0=Undetected 10=VeryLow 20=Low 30=Normal 40=High 50=Critical
                         auto refMorality = refACT->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMorality); //0=AnyCrime 1=CrimeAgainstEnemy 2=ProperyCrime 3=NoCrime
                         auto crimeItem = RE::TESForm::LookupByID(0x000000f);
-                        auto crimeGold = 50;
+                        int32_t crimeGold = 50;
                         if (refFAC != nullptr) {
-                            crimeGold = refFAC->crimeData.crimevalues.pickpocketCrimeGold / refFAC->crimeData.crimevalues.stealCrimeGoldMult;
+                            crimeGold = refFAC->crimeData.crimevalues.pickpocketCrimeGold * 2;
                         }
 
                         //Getting Owner
@@ -61,11 +61,6 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                             }
                         }
 
-                        if (ini.GetBoolValue("Misc", "Logs", false) == true)
-                        {
-                            logger::info("{} {}", refACT->GetName(), refDetection);
-                        }
-
                         // Detection Check
                         if (refDetection > 0 && detCount == 0) {
                             if (owner != nullptr) {
@@ -77,10 +72,9 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                                             if (refACT->IsGuard()) {
                                                 if (ini.GetBoolValue("Misc", "Logs", false) == true)
                                                 {
-                                                    logger::info("{} fac_report {}", refACT->GetName(), refDetection);
+                                                    logger::info("Report: {} {}", refACT->GetName(), refDetection);
                                                 }
                                                 act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
-                                                //refACT->GetActorRuntimeData().currentProcess->SetActorsDetectionEvent(act, center->GetPosition(), 100, center);
                                                 detCount++;
                                                 return RE::BSContainer::ForEachResult::kStop;
                                             }
@@ -90,7 +84,7 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                                         if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
                                             if (ini.GetBoolValue("Misc", "Logs", false) == true)
                                             {
-                                                logger::info("{} owner_report {}", refACT->GetName(), refDetection);
+                                                logger::info("Report: {} {}", refACT->GetName(), refDetection);
                                             }
                                             act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
                                             detCount++;
@@ -99,7 +93,7 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                                         else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
                                             if (ini.GetBoolValue("Misc", "Logs", false) == true)
                                             {
-                                                logger::info("{} non-owner_report {}", refACT->GetName(), refDetection);
+                                                logger::info("Report: {} {}", refACT->GetName(), refDetection);
                                             }
                                             act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
                                             detCount++;
@@ -114,19 +108,11 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                                         if (refACT->IsInFaction(owner->As<RE::TESFaction>())) {
                                             if (ini.GetBoolValue("Misc", "Logs", false) == true)
                                             {
-                                                logger::info("{} lowM_report {}", refACT->GetName(), refMorality);
+                                                logger::info("Report: {} {}", refACT->GetName(), refDetection);
                                             }
                                             act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
                                             detCount++;
                                             return RE::BSContainer::ForEachResult::kStop;
-                                        }
-                                        else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
-                                            if (ini.GetBoolValue("Misc", "Logs", false) == true)
-                                            {
-                                                logger::info("{} lowM_no_report {}", refACT->GetName(), refMorality);
-                                            }
-                                            //detCount++;
-                                            return RE::BSContainer::ForEachResult::kContinue;
                                         }
                                     }  // for lower moralities, use below line
                                 }
@@ -135,7 +121,7 @@ void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act) {
                     }
                 }
                 return RE::BSContainer::ForEachResult::kContinue;
-                });
+            });
         }
     }
 
@@ -217,13 +203,13 @@ void TryUnlock(RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr act, float radius,
 
     }
 
-void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float radius) {
+void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float radius, double power) {
 
-        float p_kVEasy = 200;
-        float p_kEasy = 300;
-        float p_kAverage = 400;
-        float p_kHard = 500;
-        float p_kVHard = 600;
+        long p_kVEasy = 200;
+        long p_kEasy = 300;
+        long p_kAverage = 400;
+        long p_kHard = 500;
+        long p_kVHard = 600;
 
         if (ini.GetLongValue("Gameplay", "Difficulty", 1) == 1) {
             p_kVEasy = 350;
@@ -242,7 +228,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
 
         switch (refPtr->GetLockLevel()) {
         case RE::LOCK_LEVEL::kVeryEasy:
-            if (Power >= p_kVEasy) {
+            if (power >= p_kVEasy) {
                 TryUnlock(refPtr, actPtr, radius, 0);
             }
             else {
@@ -250,7 +236,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
             }
             break;
         case RE::LOCK_LEVEL::kEasy:
-            if (Power >= p_kEasy) {
+            if (power >= p_kEasy) {
                 TryUnlock(refPtr, actPtr, radius, 0);
             }
             else {
@@ -258,7 +244,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
             }
             break;
         case RE::LOCK_LEVEL::kAverage:
-            if (Power >= p_kAverage) {
+            if (power >= p_kAverage) {
                 TryUnlock(refPtr, actPtr, radius, 0);
             }
             else {
@@ -266,7 +252,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
             }
             break;
         case RE::LOCK_LEVEL::kHard:
-            if (Power >= p_kHard) {
+            if (power >= p_kHard) {
                 TryUnlock(refPtr, actPtr, radius, 0);
             }
             else {
@@ -274,7 +260,7 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
             }
             break;
         case RE::LOCK_LEVEL::kVeryHard:
-            if (Power >= p_kVHard) {
+            if (power >= p_kVHard) {
                 TryUnlock(refPtr, actPtr, radius, 0);
             }
             else {
@@ -282,17 +268,17 @@ void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float r
             }
             break;
         case RE::LOCK_LEVEL::kUnlocked:
-            if (Power >= 0 || Power <= 0) {
+            if (power >= 0 || power <= 0) {
                 TryUnlock(refPtr, actPtr, radius, 2);
             }
             break;
         case RE::LOCK_LEVEL::kRequiresKey:
-            if (Power >= 0 || Power <= 0) {
+            if (power >= 0 || power <= 0) {
                 TryUnlock(refPtr, actPtr, radius, 3);
             }
             break;
         default:
-            if (Power >= 0 || Power <= 0) {
+            if (power >= 0 || power <= 0) {
                 TryUnlock(refPtr, actPtr, radius, 4);
             }
             break;

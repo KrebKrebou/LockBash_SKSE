@@ -28,87 +28,109 @@
 //    }
 //}
 
-void HybridDetection(SKSE::stl::enumeration<RE::ActorValue, uint32_t> weapSkill, RE::TESObjectWEAP* weap, RE::WEAPON_TYPE weapType){
-
+double HybridDetection(SKSE::stl::enumeration<RE::ActorValue, uint32_t> weapSkill, RE::TESObjectWEAP* weap, double pwr) {
     // hybrid system
     if (weapSkill.get() == RE::ActorValue::kNone) {
-        if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Skill: kNone"); }
-         switch (weap->GetWeaponType()) {
-         case RE::WEAPON_TYPE::kHandToHandMelee:
-             if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kHandToHandMelee"); }
-             Power = Power - 100;
-             break;
-         default:
-             if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: defaultNone"); }
-             Power = Power - 75;
-             break;
-         }     
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Skill: None"); }
+        switch (weap->GetWeaponType()) {
+        case RE::WEAPON_TYPE::kHandToHandMelee:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Hand to Hand"); }
+            pwr = pwr - 100;
+            break;
+        case RE::WEAPON_TYPE::kOneHandDagger:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Dagger"); }
+            pwr = pwr - 50;
+            break;
+        case RE::WEAPON_TYPE::kOneHandSword:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Sword"); }
+            pwr = pwr + 25;
+            break;
+        case RE::WEAPON_TYPE::kOneHandAxe:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Axe"); }
+            pwr = pwr + 50;
+            break;
+        case RE::WEAPON_TYPE::kOneHandMace:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Mace"); }
+            pwr = pwr + 75;
+            break;
+        case RE::WEAPON_TYPE::kTwoHandSword:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Greatsword"); }
+            pwr = pwr + 100;
+            break;
+        case RE::WEAPON_TYPE::kTwoHandAxe:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Battleaxe / Warhammer"); }
+            pwr = pwr + 125;
+            break;
+        default:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: default"); }
+            pwr = pwr + 0;
+            break;
+        }
     }
-
     else if (weapSkill.get() == RE::ActorValue::kOneHanded) {
-        if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Skill: kOneHanded"); }
-         switch(weap->GetWeaponType()){
-         case RE::WEAPON_TYPE::kHandToHandMelee:
-             if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kHandToHandMelee"); }
-             Power = Power - 100;
-             break;
-         case RE::WEAPON_TYPE::kOneHandDagger:
-             if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kOneHandDagger"); }
-             Power = Power - 50;
-             break;
-         case RE::WEAPON_TYPE::kOneHandSword:
-             if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kOneHandSword"); }
-             Power = Power + 25;
-             break;
-         case RE::WEAPON_TYPE::kOneHandAxe:
-             if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kOneHandAxe"); }
-             Power = Power + 50;
-             break;
-         case RE::WEAPON_TYPE::kOneHandMace:
-             if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kOneHandMace"); }
-             Power = Power + 75;
-             break;
-         default:
-             if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: defaultOneHand"); }
-             Power = Power + 0;
-             break;
-         }
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Skill: One-Handed"); }
+        switch (weap->GetWeaponType()) {
+        case RE::WEAPON_TYPE::kHandToHandMelee:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Hand to Hand"); }
+            pwr = pwr - 100;
+            break;
+        case RE::WEAPON_TYPE::kOneHandDagger:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Dagger"); }
+            pwr = pwr - 50;
+            break;
+        case RE::WEAPON_TYPE::kOneHandSword:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Sword"); }
+            pwr = pwr + 25;
+            break;
+        case RE::WEAPON_TYPE::kOneHandAxe:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Axe"); }
+            pwr = pwr + 50;
+            break;
+        case RE::WEAPON_TYPE::kOneHandMace:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Mace"); }
+            pwr = pwr + 75;
+            break;
+        default:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("WeaponType: default"); }
+            pwr = pwr + 0;
+            break;
+        }
     }
-
     else if (weapSkill.get() == RE::ActorValue::kTwoHanded) {
-         if (ini.GetBoolValue("Misc", "Logs", false) == true) {logger::info("Skill: kTwoHanded");}
-         switch (weap->GetWeaponType()) {
-         case RE::WEAPON_TYPE::kTwoHandSword:
-             if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kTwoHandSword"); }
-             Power = Power + 100;
-             break;
-         case RE::WEAPON_TYPE::kTwoHandAxe:
-             if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: kTwoHandAxe / Warhammer"); }
-             Power = Power + 125;
-             break;
-         default:
-             if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Type: defaultTwoHand"); }
-             Power = Power + 75;
-             break;
-         }
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Skill: Two-Handed"); }
+        switch (weap->GetWeaponType()) {
+        case RE::WEAPON_TYPE::kTwoHandSword:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Greatsword"); }
+            pwr = pwr + 100;
+            break;
+        case RE::WEAPON_TYPE::kTwoHandAxe:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: Battleaxe / Warhammer"); }
+            pwr = pwr + 125;
+            break;
+        default:
+            if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Weapon: default"); }
+            pwr = pwr + 75;
+            break;
+        }
     }
-    if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Power = {}", Power); }
-}
+    return pwr;
+} 
 
-void SkillDetection(SKSE::stl::enumeration<RE::ActorValue, uint32_t> weapSkill) {
+double SkillDetection(SKSE::stl::enumeration<RE::ActorValue, uint32_t> weapSkill, double pwr) {
     // by governing skill
     if (weapSkill.get() == RE::ActorValue::kNone) {
         if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Unarmed"); }
-        Power = Power - 75;
+        pwr = pwr - 100;
     }
     else if (weapSkill.get() == RE::ActorValue::kOneHanded) {
-        if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("OneHanded"); }
-        Power = Power + 0;
+        if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("One-Handed"); }
+        pwr = pwr + 0;
     }
     else if (weapSkill.get() == RE::ActorValue::kTwoHanded) {
-        if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("TwoHanded"); }
-        Power = Power + 75;
+        if (ini.GetBoolValue("Misc", "Logs", false) == true) { logger::info("Two-Handed"); }
+        pwr = pwr + 100;
     }
+    return pwr;
 }
 
 //void KeywordDetection(RE::TESObjectWEAP *weap, float Power){
