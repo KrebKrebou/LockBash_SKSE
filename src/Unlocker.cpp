@@ -99,7 +99,7 @@ namespace LB {
             }
             break;
         case RE::LOCK_LEVEL::kUnlocked:
-            if (power >= 0 && power <= 0) {
+            if (power >= 0 || power <= 0) {
                 canBreak = " can't break the lock, already unlocked.";
                 soundBreak = "";
                 if (ini.GetBoolValue("Gameplay", "CrimeEvenIfUnlocked", false) == true) {
@@ -109,7 +109,7 @@ namespace LB {
             }
             break;
         case RE::LOCK_LEVEL::kRequiresKey:
-            if (power >= 0 && power <= 0) {
+            if (power >= 0 || power <= 0) {
                 canBreak = " can't break the lock, needs a key.";
                 soundBreak = "DRSLockedSD";
                 std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
@@ -117,7 +117,7 @@ namespace LB {
             }
             break;
         default:
-            if (power >= 0 && power <= 0) {
+            if (power >= 0 || power <= 0) {
                 canBreak = " can't break the lock, won't budge.";
                 soundBreak = "DRSLockedSD";
                 std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
