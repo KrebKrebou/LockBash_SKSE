@@ -1,11 +1,15 @@
 #pragma once
 #include "Timer.h"
+namespace LB {
+	class Unlocker {
+	public:
+		static void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float radius, double power);
 
-//inline float Power;
+	private:
+		static void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act);
 
-void CrimeCheck(RE::TESObjectREFR* center, float radius, RE::Actor* act);
+	};
+}
 
-void TryUnlock(RE::TESObjectREFRPtr trg, RE::TESObjectREFRPtr act, float radius, int cond);
 
-void LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float radius, double power);
 

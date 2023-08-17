@@ -1,4 +1,12 @@
 #pragma once
 #include "WeapDetect.h"
 
-void RegisterForEvent_Hit();
+namespace LB {
+
+	class RegisterEvent {
+	public:
+		static void Hit();
+
+	};
+}
+

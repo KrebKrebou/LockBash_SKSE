@@ -2,6 +2,13 @@
 #include <chrono>
 #include <thread>
 
-int timer(int val);
+namespace LB {
 
-int cooldown(int val);
+	class Wait {
+	public:
+		static int Cooldown(int val);
+		inline static bool Active;
+
+	};
+}
+
