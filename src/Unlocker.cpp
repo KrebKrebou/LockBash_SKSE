@@ -3,17 +3,8 @@
 namespace LB {
 
     void Unlocker::LockCheck(RE::TESObjectREFRPtr refPtr, RE::TESObjectREFRPtr actPtr, float radius, double power) {
-        const char* soundBreak = "";
-        std::string canBreak = "";
-        std::string actorName = "";
-        std::string combinedMsg = "";
-        const char* breakMsg = "";
-
-        long p_kVEasy = 200;
-        long p_kEasy = 300;
-        long p_kAverage = 400;
-        long p_kHard = 500;
-        long p_kVHard = 600;
+        std::thread t0(&Wait::Timer, 250);
+        t0.join();
 
         if (ini.GetLongValue("Gameplay", "Difficulty", 1) == 1) {
             p_kVEasy = 350;
@@ -36,80 +27,102 @@ namespace LB {
                 canBreak = " broke the lock.";
                 soundBreak = "TRPTripwireSD";
                 refPtr->GetLock()->SetLocked(false);
+                std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                t1.detach();
             }
             else {
                 canBreak = " can't break the lock.";
                 soundBreak = "DRSLockedSD";
+                std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                t1.detach();
             }
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            //CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
             break;
         case RE::LOCK_LEVEL::kEasy:
             if (power >= p_kEasy) {
                 canBreak = " broke the lock.";
                 soundBreak = "TRPTripwireSD";
                 refPtr->GetLock()->SetLocked(false);
+                std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                t1.detach();
             }
             else {
                 canBreak = " can't break the lock.";
                 soundBreak = "DRSLockedSD";
+                std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                t1.detach();
             }
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
             break;
         case RE::LOCK_LEVEL::kAverage:
             if (power >= p_kAverage) {
                 canBreak = " broke the lock.";
                 soundBreak = "TRPTripwireSD";
                 refPtr->GetLock()->SetLocked(false);
+                std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                t1.detach();
             }
             else {
                 canBreak = " can't break the lock.";
                 soundBreak = "DRSLockedSD";
+                std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                t1.detach();
             }
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
             break;
         case RE::LOCK_LEVEL::kHard:
             if (power >= p_kHard) {
                 canBreak = " broke the lock.";
                 soundBreak = "TRPTripwireSD";
                 refPtr->GetLock()->SetLocked(false);
+                std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                t1.detach();
             }
             else {
                 canBreak = " can't break the lock.";
                 soundBreak = "DRSLockedSD";
+                std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                t1.detach();
             }
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
             break;
         case RE::LOCK_LEVEL::kVeryHard:
             if (power >= p_kVHard) {
                 canBreak = " broke the lock.";
                 soundBreak = "TRPTripwireSD";
                 refPtr->GetLock()->SetLocked(false);
+                std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                t1.detach();
             }
             else {
                 canBreak = " can't break the lock.";
                 soundBreak = "DRSLockedSD";
+                std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                t1.detach();
             }
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
             break;
         case RE::LOCK_LEVEL::kUnlocked:
-            canBreak = " can't break the lock, already unlocked.";
-            soundBreak = "";
-
-            if (ini.GetBoolValue("Gameplay", "CrimeEvenIfUnlocked", false) == true) {
-                CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            if (power >= 0 && power <= 0) {
+                canBreak = " can't break the lock, already unlocked.";
+                soundBreak = "";
+                if (ini.GetBoolValue("Gameplay", "CrimeEvenIfUnlocked", false) == true) {
+                    std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                    t1.detach();
+                }
             }
             break;
         case RE::LOCK_LEVEL::kRequiresKey:
-            canBreak = " can't break the lock, needs a key.";
-            soundBreak = "DRSLockedSD";
-
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            if (power >= 0 && power <= 0) {
+                canBreak = " can't break the lock, needs a key.";
+                soundBreak = "DRSLockedSD";
+                std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                t1.detach();
+            }
             break;
         default:
-            canBreak = " can't break the lock, won't budge.";
-            soundBreak = "DRSLockedSD";
-
-            CrimeCheck(refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+            if (power >= 0 && power <= 0) {
+                canBreak = " can't break the lock, won't budge.";
+                soundBreak = "DRSLockedSD";
+                std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
+                t1.detach();
+            }
             break;
         }
         RE::PlaySound(soundBreak);
@@ -135,8 +148,10 @@ namespace LB {
                 return;
             }
             else if (!Wait::Active) {
-                std::thread cooldown_thread(&Wait::Cooldown, 5000);
-                cooldown_thread.detach();
+                std::thread t1(&Wait::Timer, 800);
+                std::thread t2(&Wait::Cooldown, 5000);
+                t1.join();
+                t2.detach();
 
                 int detCount = 0;
                 RE::TES::GetSingleton()->ForEachReferenceInRange(center, radius, [act, center, &detCount](RE::TESObjectREFR& ref) {
@@ -205,10 +220,10 @@ namespace LB {
                                                     if (ini.GetBoolValue("Misc", "Logs", false) == true)
                                                     {
                                                         logger::info("Report: {} [{}]", refACT->GetName(), refDetection);
-                                                    }
+                                                    }            
                                                     act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
                                                     detCount++;
-                                                    return RE::BSContainer::ForEachResult::kStop;
+                                                    return RE::BSContainer::ForEachResult::kContinue;
                                                 }
                                             }
                                         }
@@ -218,9 +233,9 @@ namespace LB {
                                                 {
                                                     logger::info("Report: {} [{}]", refACT->GetName(), refDetection);
                                                 }
-                                                act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+                                                act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
                                                 detCount++;
-                                                return RE::BSContainer::ForEachResult::kStop;
+                                                return RE::BSContainer::ForEachResult::kContinue;
                                             }
                                             else if (!refACT->IsInFaction(owner->As<RE::TESFaction>())) {
                                                 if (ini.GetBoolValue("Misc", "Logs", false) == true)
@@ -229,7 +244,7 @@ namespace LB {
                                                 }
                                                 act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
                                                 detCount++;
-                                                return RE::BSContainer::ForEachResult::kStop;
+                                                return RE::BSContainer::ForEachResult::kContinue;
                                             }
                                         }
                                     }
@@ -242,9 +257,9 @@ namespace LB {
                                                 {
                                                     logger::info("Report: {} [{}]", refACT->GetName(), refDetection);
                                                 }
-                                                act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+                                                act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
                                                 detCount++;
-                                                return RE::BSContainer::ForEachResult::kStop;
+                                                return RE::BSContainer::ForEachResult::kContinue;
                                             }
                                         }
                                     }
@@ -253,7 +268,7 @@ namespace LB {
                         }
                     }
                     return RE::BSContainer::ForEachResult::kContinue;
-                    });
+                });
             }
         }
     }

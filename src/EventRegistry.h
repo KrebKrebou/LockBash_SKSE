@@ -6,7 +6,7 @@ namespace LB {
 	class RegisterEvent {
 	public:
 		static void Hit();
-
+	
 	};
 }
 

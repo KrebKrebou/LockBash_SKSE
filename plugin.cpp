@@ -15,8 +15,6 @@ SKSEPluginLoad(const SKSE::LoadInterface *skse) {
             RE::ConsoleLog::GetSingleton()->Print("LockBashSKSE Initialized");
 
         }
-
     });
-
     return true;
 }

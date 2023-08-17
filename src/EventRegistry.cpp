@@ -64,7 +64,9 @@ namespace LB {
                                                 logger::info("Power: {}", power);
                                                 logger::info("Target: {}", event->target->GetName());
                                             }
-                                            Unlocker::LockCheck(targetREFptr, actorREFptr, distance, power);
+                                            std::thread t1(&Unlocker::LockCheck, targetREFptr, actorREFptr, distance, power);
+                                            t1.detach();
+                                            //Unlocker::LockCheck(targetREFptr, actorREFptr, distance, power);
                                         }
                                     }
                                 }

@@ -12,4 +12,10 @@ namespace LB {
         }
         return 0;
     }
+
+    int Wait::Timer(int val) {
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(val));
+            return 0;
+    }
 }
