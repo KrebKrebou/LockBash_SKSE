@@ -17,6 +17,7 @@ void SetupINI() {
         ini.SetLongValue("Gameplay", "Weapon Detection", 1, weapDetcom, false, true);
         ini.SetBoolValue("Gameplay", "Crime", true, crimeDetcom, true);
         ini.SetBoolValue("Gameplay", "CrimeEvenIfUnlocked", false, NULL, true);
+        ini.SetBoolValue("Gameplay", "WarnBeforeReporting", true, NULL, true);
 
         ini.SetValue("Custom", NULL, NULL, customCom, true);
         ini.SetLongValue("Custom", "Very Easy", 350, NULL, false, true);

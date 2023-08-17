@@ -165,7 +165,7 @@ namespace LB {
                             auto crimeItem = RE::TESForm::LookupByID(0x000000f);
                             int32_t crimeGold = 50;
                             if (refFAC) {
-                                crimeGold = refFAC->crimeData.crimevalues.pickpocketCrimeGold * 2;
+                                crimeGold = refFAC->crimeData.crimevalues.pickpocketCrimeGold / refFAC->crimeData.crimevalues.stealCrimeGoldMult;
                             }
 
                             //Getting Owner
@@ -221,7 +221,13 @@ namespace LB {
                                                     {
                                                         logger::info("Report: {} [{}]", refACT->GetName(), refDetection);
                                                     }            
-                                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                                                    if (ini.GetBoolValue("Gameplay", "WarnBeforeReporting", true) == true)
+                                                    {
+                                                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                                                    }
+                                                    else {
+                                                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+                                                    }
                                                     detCount++;
                                                     return RE::BSContainer::ForEachResult::kContinue;
                                                 }
@@ -233,7 +239,13 @@ namespace LB {
                                                 {
                                                     logger::info("Report: {} [{}]", refACT->GetName(), refDetection);
                                                 }
-                                                act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                                                if (ini.GetBoolValue("Gameplay", "WarnBeforeReporting", true) == true)
+                                                {
+                                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                                                }
+                                                else {
+                                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+                                                }
                                                 detCount++;
                                                 return RE::BSContainer::ForEachResult::kContinue;
                                             }
@@ -242,7 +254,13 @@ namespace LB {
                                                 {
                                                     logger::info("Report: {} [{}]", refACT->GetName(), refDetection);
                                                 }
-                                                act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                                                if (ini.GetBoolValue("Gameplay", "WarnBeforeReporting", true) == true)
+                                                {
+                                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                                                }
+                                                else {
+                                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+                                                }
                                                 detCount++;
                                                 return RE::BSContainer::ForEachResult::kContinue;
                                             }
@@ -257,7 +275,13 @@ namespace LB {
                                                 {
                                                     logger::info("Report: {} [{}]", refACT->GetName(), refDetection);
                                                 }
-                                                act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                                                    if (ini.GetBoolValue("Gameplay", "WarnBeforeReporting", true) == true)
+                                                    {
+                                                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                                                    }
+                                                    else {
+                                                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+                                                    }
                                                 detCount++;
                                                 return RE::BSContainer::ForEachResult::kContinue;
                                             }
