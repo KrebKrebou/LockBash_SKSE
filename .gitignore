@@ -2,3 +2,4 @@
 .vscode/settings.json
 build
 cmake-build*
+LockBashNG fomod
