@@ -101,7 +101,7 @@ namespace LB {
         case RE::LOCK_LEVEL::kUnlocked:
             if (power >= 0 || power <= 0) {
                 canBreak = " can't break the lock, already unlocked.";
-                soundBreak = "";
+                soundBreak = NULL;
                 if (ini.GetBoolValue("Gameplay", "CrimeEvenIfUnlocked", false) == true) {
                     std::thread t1(&Unlocker::CrimeCheck, refPtr->AsReference(), radius, actPtr->As<RE::Actor>());
                     t1.detach();
