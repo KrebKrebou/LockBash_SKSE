@@ -220,7 +220,11 @@ namespace LB {
                                                     if (ini.GetBoolValue("Misc", "Logs", false) == true)
                                                     {
                                                         logger::info("Report: {} [{}]", refACT->GetName(), refDetection);
-                                                    }            
+                                                    }
+                                                if (!center->GetLock()->IsLocked()) {
+                                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+ 
+                                                } else if(center->GetLock()->IsLocked()) {
                                                     if (ini.GetBoolValue("Gameplay", "WarnBeforeReporting", true) == true)
                                                     {
                                                         act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
@@ -228,6 +232,7 @@ namespace LB {
                                                     else {
                                                         act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
                                                     }
+                                                }
                                                     detCount++;
                                                     return RE::BSContainer::ForEachResult::kContinue;
                                                 }
@@ -239,12 +244,18 @@ namespace LB {
                                                 {
                                                     logger::info("Report: {} [{}]", refACT->GetName(), refDetection);
                                                 }
-                                                if (ini.GetBoolValue("Gameplay", "WarnBeforeReporting", true) == true)
-                                                {
-                                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
-                                                }
-                                                else {
+                                                if (!center->GetLock()->IsLocked()) {
                                                     act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+
+                                                }
+                                                else if (center->GetLock()->IsLocked()) {
+                                                    if (ini.GetBoolValue("Gameplay", "WarnBeforeReporting", true) == true)
+                                                    {
+                                                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                                                    }
+                                                    else {
+                                                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+                                                    }
                                                 }
                                                 detCount++;
                                                 return RE::BSContainer::ForEachResult::kContinue;
@@ -254,12 +265,18 @@ namespace LB {
                                                 {
                                                     logger::info("Report: {} [{}]", refACT->GetName(), refDetection);
                                                 }
-                                                if (ini.GetBoolValue("Gameplay", "WarnBeforeReporting", true) == true)
-                                                {
-                                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
-                                                }
-                                                else {
+                                                if (!center->GetLock()->IsLocked()) {
                                                     act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+
+                                                }
+                                                else if (center->GetLock()->IsLocked()) {
+                                                    if (ini.GetBoolValue("Gameplay", "WarnBeforeReporting", true) == true)
+                                                    {
+                                                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
+                                                    }
+                                                    else {
+                                                        act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+                                                    }
                                                 }
                                                 detCount++;
                                                 return RE::BSContainer::ForEachResult::kContinue;
@@ -275,6 +292,11 @@ namespace LB {
                                                 {
                                                     logger::info("Report: {} [{}]", refACT->GetName(), refDetection);
                                                 }
+                                                if (!center->GetLock()->IsLocked()) {
+                                                    act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
+
+                                                }
+                                                else if (center->GetLock()->IsLocked()) {
                                                     if (ini.GetBoolValue("Gameplay", "WarnBeforeReporting", true) == true)
                                                     {
                                                         act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, true);
@@ -282,6 +304,7 @@ namespace LB {
                                                     else {
                                                         act->StealAlarm(center, crimeItem, crimeGold * 2, 1, owner, false);
                                                     }
+                                                }
                                                 detCount++;
                                                 return RE::BSContainer::ForEachResult::kContinue;
                                             }
